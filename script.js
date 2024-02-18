@@ -3,12 +3,14 @@ const tableContainer = document.getElementById('container-table');
 let mySelect = document.getElementById('my-select');
 const inputSearch = document.getElementById('search-input');
 let userSearch = [];
+let buttonSearch = document.getElementById('btn-search');
 // funzione async per ricevere dati
 async function getResult () {
     try {
         const res = await fetch(`${endPoint}`);
         const json = await res.json();
-        research(json)
+        userSearch.push(...json)
+        cycleResult(userSearch)
         // console.log(json)
     } catch(err) {
         console.log("err");
@@ -20,7 +22,7 @@ getResult()
 function cycleResult(user) {
     user.forEach(ele => {
         // console.log(ele)
-        createTemplete(ele);
+        tableContainer.appendChild(createTemplete(ele));
     });
 }
 // funzione che crea il body della table
@@ -40,20 +42,18 @@ function createTemplete(element) {
 
     tbody.appendChild(tr);
     tr.append(th, tdName, tdUser, tdEmail);
-    tableContainer.appendChild(tbody);
-    console.log(tbody);
+    return tr;
 }
-
+buttonSearch.addEventListener("click", research);
 // funzione per la ricerca
-function research (json) {
-    const inputValue = inputSearch.value.trim().toLowerCase();
+function research () {
     const selectValue = mySelect.value.toLowerCase();
+    const inputValue = inputSearch.value.toLowerCase();
 
-    if(inputValue === "") {
-        return cycleResult(json);
-    }
-    let filter = userSearch.filter((ele) => {
-        return ele[selectValue.toLowerCase()].toLowerCase().includes(inputValue.trim().toLowerCase());
+    let filter = userSearch.filter(user => {
+        return tableContainer.innerHTML = "", user[selectValue].toLowerCase().includes(inputValue.toLowerCase());
     })
-    cycleResult(filter)
+    console.log("risultati filtrati:", filter);
+    cycleResult(filter);
 }
+
